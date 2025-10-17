@@ -1,5 +1,5 @@
 # Final_Project_IT_School
-Inventory and Order Management App
+# Inventory and Order Management App
 
 A lightweight web application built with Flask and SQLite for managing kitchen inventory, menu items, and customer orders.
 
@@ -17,12 +17,12 @@ VAT (21%) included in the billing.
 
 Export orders to CSV file.
 
-USED TECHNOLOGIES
+# USED TECHNOLOGIES
 
 Python, Flask, SQLite3 - Backend
 
 HTML, CSS - Frontend
 
-Project structure
+# Project structure
 
 <img width="215" height="339" alt="image" src="https://github.com/user-attachments/assets/e6a9a9e4-a366-410e-9844-7562e9056984" />
