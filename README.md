@@ -12,7 +12,9 @@ VAT (21%) included in the billing.
 Export orders to CSV.
 
 USED TECHNOLIGIES
+
 Python, Flask, SQLite3 - Backend
+
 HTML, CSS - Frontend
 
 Project structure
