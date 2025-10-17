@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Order #{{ order['id'] }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">My Kitchen</div>
+      <nav><a class="btn" href="{{ url_for('index') }}">Back</a></nav>
+    </header>
+
+    <main class="container card">
+      <h2>Order #{{ order['id'] }}</h2>
+      <div class="muted">Placed: {{ order['order_date_display'] }}</div>
+
+      <table class="bill">
+        <thead><tr><th>Dish</th><th class="right">Qty</th><th class="right">Line</th></tr></thead>
+        <tbody>
+          {% for it in items %}
+            <tr><td>{{ it['dish_name'] }}</td><td class="right">{{ it['quantity'] }}</td><td class="right">{{ it['line_price'] }}</td></tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr><td colspan="2">Subtotal</td><td class="right">{{ order['subtotal'] }}</td></tr>
+          <tr><td colspan="2">VAT ({{ (order['vat_rate']*100)|round(0) }}%)</td><td class="right">{{ order['vat_amount'] }}</td></tr>
+          <tr class="total"><td colspan="2">Total</td><td class="right">{{ order['total'] }}</td></tr>
+        </tfoot>
+      </table>
+    </main>
+  </body>
+</html>

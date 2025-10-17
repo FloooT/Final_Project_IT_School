@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>New Order</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">My Kitchen</div>
+      <nav><a class="btn" href="{{ url_for('index') }}">Back</a></nav>
+    </header>
+
+    <main class="container card">
+      <h2>Create Order</h2>
+
+      <form id="order-form" method="post" action="{{ url_for('new_order') }}" onsubmit="return prepareOrder()">
+        <div id="items">
+          <div class="row item-row">
+            <select name="dish_id[]">
+              <option value="">-- select dish --</option>
+              {% for d in dishes %}<option value="{{ d['id'] }}">{{ d['dish_name'] }} ({{ d['dish_price'] }})</option>{% endfor %}
+            </select>
+            <input name="qty[]" type="number" min="1" value="1" style="width:80px">
+            <button type="button" onclick="this.parentElement.remove()">Remove</button>
+          </div>
+        </div>
+
+        <p class="actions">
+          <button type="button" class="btn" onclick="addItem()">Add Dish</button>
+          <button type="submit" class="btn">Place Order (VAT {{ (vat_rate*100)|round(0) }}%)</button>
+        </p>
+      </form>
+
+      <section class="card small">
+        <h4>Quick tips</h4>
+        <p>All dish quantities must be integer &gt; 0. If stock is insufficient order will be rejected.</p>
+      </section>
+    </main>
+
+    <script>
+      function addItem(){
+        const div = document.createElement('div');
+        div.className = 'row item-row';
+        div.innerHTML = `<select name="dish_id[]"><option value="">-- select dish --</option>{% for d in dishes %}<option value="{{ d['id'] }}">{{ d['dish_name'] }} ({{ d['dish_price'] }})</option>{% endfor %}</select>
+                         <input name="qty[]" type="number" min="1" value="1" style="width:80px">
+                         <button type="button" onclick="this.parentElement.remove()">Remove</button>`;
+        document.getElementById('items').appendChild(div);
+      }
+      function prepareOrder(){
+        const selects = document.querySelectorAll('select[name="dish_id[]"]');
+        let ok = false;
+        selects.forEach(s => { if (s.value) ok = true; });
+        if (!ok) { alert('Select at least one dish'); return false; }
+        return true;
+      }
+    </script>
+  </body>
+</html>

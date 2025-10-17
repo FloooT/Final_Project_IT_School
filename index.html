@@ -1,0 +1,146 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Inventory & Orders</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">My Kitchen</div>
+      <nav>
+        <a class="btn" href="{{ url_for('new_order') }}">New Order</a>
+        <a class="btn" href="{{ url_for('add_dish_route') }}">Add Dish</a>
+        <a class="btn" href="{{ url_for('export_orders_csv') }}">Export CSV</a>
+      </nav>
+    </header>
+
+    <main class="container">
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <div class="flash">
+            {% for m in messages %}<div>{{ m }}</div>{% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      {% if alerts %}
+        <div class="alerts-grid">
+          {% for a in alerts %}
+            <div class="alert-card">
+              <strong>{{ a.ingredient }}</strong>
+              <div class="muted">Stock: {{ a.stock }} {{ a.unit }}</div>
+              <div class="muted">Threshold: {{ a.threshold }} {{ a.unit }}</div>
+              <div class="alert-ask">Please reorder</div>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <section class="grid two">
+        <div class="card">
+          <h3>Ingredients</h3>
+
+          <form class="filter" method="get" action="{{ url_for('index') }}">
+            <input name="ing_name" placeholder="name contains" value="{{ ing_filters.name }}">
+            <input name="ing_qty" placeholder="quantity" value="{{ ing_filters.qty }}">
+            <select name="ing_op"><option value="ge" {% if ing_filters.op=='ge' %}selected{% endif %}>&ge;</option><option value="le" {% if ing_filters.op=='le' %}selected{% endif %}>&le;</option></select>
+            <button type="submit">Filter</button>
+          </form>
+
+          <div class="card small" id="add-ingredient-card">
+            <form action="{{ url_for('add_ingredient_route') }}" method="post" class="simple-form">
+              <input name="name" placeholder="Ingredient name" required>
+              <input name="quantity" type="number" step="any" placeholder="Quantity" value="0" min="0.0001">
+              <select name="unit"><option>g</option><option>pc</option><option>ml</option></select>
+              <button type="submit" class="btn">Add ingredient</button>
+            </form>
+          </div>
+
+          <ul class="list">
+            {% for i in ingredients %}
+              <li>
+                <div class="left">
+                  <strong>{{ i['ingredient_name'] }}</strong>
+                  <div class="muted">{{ i['quantity_in_stock'] }} {{ i['unit'] }}</div>
+                </div>
+                <div class="right">
+                  <a class="link" href="{{ url_for('edit_ingredient_route', ingredient_id=i['id']) }}">Edit</a>
+                  <form action="{{ url_for('delete_ingredient_route', ingredient_id=i['id']) }}" method="post" class="inline" onsubmit="return confirmDelete('ingredient','{{ i['ingredient_name'] }}')">
+                    <button class="link danger" type="submit">Delete</button>
+                  </form>
+                </div>
+              </li>
+            {% else %}<li>No ingredients</li>{% endfor %}
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Menu</h3>
+
+          <form class="filter" method="get" action="{{ url_for('index') }}">
+            <input name="dish_name" placeholder="name contains" value="{{ dish_filters.name }}">
+            <input name="dish_price" placeholder="price" value="{{ dish_filters.price }}">
+            <select name="dish_op"><option value="le" {% if dish_filters.op=='le' %}selected{% endif %}>&le;</option><option value="ge" {% if dish_filters.op=='ge' %}selected{% endif %}>&ge;</option></select>
+            <button type="submit">Filter</button>
+          </form>
+
+          <ul class="list">
+            {% for d in dishes %}
+              <li>
+                <div class="left">
+                  <strong>{{ d['dish_name'] }}</strong>
+                  <div class="muted">Price: {{ d['dish_price'] }}</div>
+                </div>
+                <div class="right">
+                  <a class="link" href="{{ url_for('edit_dish_route', dish_id=d['id']) }}">Edit</a>
+                  <form action="{{ url_for('delete_dish_route', dish_id=d['id']) }}" method="post" class="inline" onsubmit="return confirmDelete('dish','{{ d['dish_name'] }}')">
+                    <button class="link danger" type="submit">Delete</button>
+                  </form>
+                </div>
+              </li>
+            {% else %}<li>No dishes</li>{% endfor %}
+          </ul>
+        </div>
+      </section>
+
+      <section class="card">
+        <h3>Orders</h3>
+
+        <form class="filter" method="get" action="{{ url_for('index') }}">
+          <input name="order_dish_name" placeholder="dish contains" value="{{ order_filters.name }}">
+          <input name="start_date" type="date" value="{{ order_filters.start }}">
+          <input name="end_date" type="date" value="{{ order_filters.end }}">
+          <button type="submit">Filter</button>
+        </form>
+
+        <ul class="list orders-list">
+          {% for o in orders %}
+            <li>
+              <div class="left">
+                <strong>Order #{{ o.order['id'] }}</strong>
+                <div class="muted">Placed: {{ o.order['order_date_display'] }} — total: {{ o.order['total'] }} (VAT {{ (o.order['vat_rate']*100)|round(0) }}%)</div>
+                <div class="order-items">
+                  {% for it in o["items"] %}
+                    <div class="order-item">• {{ it['dish_name'] }} x{{ it['quantity'] }} — {{ it['line_price'] }}</div>
+                  {% endfor %}
+                </div>
+              </div>
+              <div class="right">
+                <a class="btn" href="{{ url_for('order_detail', order_id=o.order['id']) }}">View bill</a>
+              </div>
+            </li>
+          {% else %}<li>No orders</li>{% endfor %}
+        </ul>
+      </section>
+    </main>
+
+    <footer class="footer">VAT: {{ (vat_rate*100)|round(0) }}% — Inventory & Bills</footer>
+
+    <script>
+      function confirmDelete(type, name) {
+        return confirm('Delete ' + type + ' \"' + name + '\"? This cannot be undone.');
+      }
+    </script>
+  </body>
+</html>
