@@ -9,9 +9,9 @@ Create dishes and add each ingredient with the needed quantity, unit and price.
 Place multi item orders with automatic stock deduction and low stock alert when an ingredient inventory stock is lower than 3x the used quantity.
 Filter orders by date range and dish name.
 VAT (21%) included in the billing.
-Export orders to CSV.
+Export orders to CSV file.
 
-USED TECHNOLIGIES
+USED TECHNOLOGIES
 
 Python, Flask, SQLite3 - Backend
 
