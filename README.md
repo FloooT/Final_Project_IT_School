@@ -8,7 +8,8 @@ Built as my final project for **IT School — Python Programming** (Nov 2025).
 
 ## 📸 Preview
 
-![App Screenshot](inventory_app.PNG)
+<img width="781" height="1236" alt="inventory app" src="https://github.com/user-attachments/assets/0d466b02-1c63-401b-97ab-7c8cf33b3007" />
+
 
 ---
 
